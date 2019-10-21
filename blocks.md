@@ -263,6 +263,8 @@ Creates a block to display the current keyboard layout.
 
 This block polls `setxkbmap` for the current layout by default, but can be configured to read asynchronous updates from the systemd `org.freedesktop.locale1` D-Bus path. Which of these two methods is appropriate will depend on your system setup.
 
+There is another driver `kbddbus` in i3status-rust > 0.11.0, that relies on `kbdd` and `setxkbmap`, so it's kinda mix between the other two drivers. Kbdd keeps track of the current layout configuration for the active window and the driver reads its state from the systemd, so no polling is needed. Manual switching of the current layout is also monitored by kbdd and the inicator is immediately refreshed.
+
 ### Examples
 
 Check `setxkbmap` every 15 seconds:
@@ -282,11 +284,18 @@ block = "keyboard_layout"
 driver = "localebus"
 ```
 
+Listen to kbdd D-Bus events: 
+```toml
+[[block]]
+block = "keyboard_layout"
+driver = "kbddbus"
+```
+
 ### Options
 
 Key | Values | Required | Default
 ----|--------|----------|--------
-`driver` | One of `"setxkbmap"` or `"localebus"`, depending on your system. | No | `"setxkbmap"`
+`driver` | One of `"setxkbmap"`, `"localebus"` or `"kbddbus"`, depending on your system. | No | `"setxkbmap"`
 `interval` | Update interval, in seconds. Only used by the `"setxkbmap"` driver. | No | `60`
 
 ## Load
